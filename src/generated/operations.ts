@@ -14,7 +14,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _Any: any;
 };
 
 export type Continent = {
@@ -30,9 +29,11 @@ export type ContinentFilterInput = {
 
 export type Country = {
   __typename?: 'Country';
+  awsRegion: Scalars['String'];
   capital?: Maybe<Scalars['String']>;
   code: Scalars['ID'];
   continent: Continent;
+  currencies: Array<Scalars['String']>;
   currency?: Maybe<Scalars['String']>;
   emoji: Scalars['String'];
   emojiU: Scalars['String'];
@@ -40,7 +41,14 @@ export type Country = {
   name: Scalars['String'];
   native: Scalars['String'];
   phone: Scalars['String'];
+  phones: Array<Scalars['String']>;
   states: Array<State>;
+  subdivisions: Array<Subdivision>;
+};
+
+
+export type CountryNameArgs = {
+  lang?: InputMaybe<Scalars['String']>;
 };
 
 export type CountryFilterInput = {
@@ -52,8 +60,8 @@ export type CountryFilterInput = {
 export type Language = {
   __typename?: 'Language';
   code: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  native?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  native: Scalars['String'];
   rtl: Scalars['Boolean'];
 };
 
@@ -78,8 +86,6 @@ export type PersonInput = {
 
 export type Query = {
   __typename?: 'Query';
-  _entities: Array<Maybe<_Entity>>;
-  _service: _Service;
   continent?: Maybe<Continent>;
   continents: Array<Continent>;
   countries: Array<Country>;
@@ -87,11 +93,6 @@ export type Query = {
   language?: Maybe<Language>;
   languages: Array<Language>;
   person: Person;
-};
-
-
-export type Query_EntitiesArgs = {
-  representations: Array<Scalars['_Any']>;
 };
 
 
@@ -138,24 +139,22 @@ export type State = {
 
 export type StringQueryOperatorInput = {
   eq?: InputMaybe<Scalars['String']>;
-  glob?: InputMaybe<Scalars['String']>;
-  in?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  in?: InputMaybe<Array<Scalars['String']>>;
   ne?: InputMaybe<Scalars['String']>;
-  nin?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  nin?: InputMaybe<Array<Scalars['String']>>;
   regex?: InputMaybe<Scalars['String']>;
+};
+
+export type Subdivision = {
+  __typename?: 'Subdivision';
+  code: Scalars['ID'];
+  emoji?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
   token: Scalars['String'];
-};
-
-export type _Entity = Continent | Country | Language;
-
-export type _Service = {
-  __typename?: '_Service';
-  /** The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied */
-  sdl?: Maybe<Scalars['String']>;
 };
 
 export type CountryQueryVariables = Exact<{ [key: string]: never; }>;
