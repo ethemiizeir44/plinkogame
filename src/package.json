@@ -39,6 +39,7 @@
     "@vueuse/nuxt": "^7.3.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.4.1",
+    "gsap": "^3.12.2",
     "nuxt": "3.0.0-rc.4",
     "serverless": "^3.2.1",
     "serverless-domain-manager": "^6.0.2",
