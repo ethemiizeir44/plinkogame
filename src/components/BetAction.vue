@@ -125,10 +125,10 @@ export default {
 
         DecodeInputData() {
             let currentConfiguration = this.configurationData[this.currentGameIndex];
-            let numberOfBalls = 9;
+            let numberOfBalls = 16;
             let finalPosArr = []
-            for (let i = 0; i < numberOfBalls; i++) {
-                finalPosArr.push(Math.floor(Math.random() * (this.currentGameIndex + 10)));
+            for (let i = 0; i <= numberOfBalls; i++) {
+                finalPosArr.push(i);
             }
 
 
@@ -430,7 +430,7 @@ export default {
         this.EngineObj = Matter.Engine.create();
         this.WorldObject = this.EngineObj.world;
         this.mainContainer = new PIXI.Container();
-        this.currentGameIndex = 0;
+        this.currentGameIndex = 7;
         this.pathArrBall = [];
         this.dropBallsArr = [];
         this.simulationData = [];
