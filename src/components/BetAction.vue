@@ -504,7 +504,7 @@ export default {
                 this.mainContainer.scale.set(1);
             }
             this.mainContainer.position.set((this.$refs.plinkoDiv.clientWidth - this.mainContainer.width) / 2, (this.$refs.plinkoDiv.clientHeight - this.mainContainer.height) / 2);
-            this.historyContainer.position.set(this.$refs.plinkoDiv.clientWidth - 200, (this.$refs.plinkoDiv.clientHeight - this.historyContainer.height) / 2);
+            this.historyContainer.position.set(this.$refs.plinkoDiv.clientWidth - 125, (this.$refs.plinkoDiv.clientHeight - this.historyContainer.height) / 2);
         }
     },
 
