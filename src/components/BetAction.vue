@@ -44,14 +44,16 @@
                     </div>
                     <select defaultValue="{16}"
                         className="w-full rounded-md border-2 border-secondary bg-background px-4 py-2 font-bold transition-all placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none disabled:line-through disabled:opacity-80"
-                        id="lines">
+                        id="lines" @change="ChangeLine">
                         <!-- {linesOptions.map(line => ( -->
-                        <option key="{line}" value="{line}">14 Line</option>
-                        <option key="{line}" value="{line}">9 Line</option>
-                        <option key="{line}" value="{line}">10 Line</option>
-                        <option key="{line}" value="{line}">11 Line</option>
-                        <option key="{line}" value="{line}">12 Line</option>
-                        <option key="{line}" value="{line}">13 Line</option>
+                        <option key="{line}" value=16>16 Line</option>
+                        <option key="{line}" value=15>15 Line</option>
+                        <option key="{line}" value=14>14 Line</option>
+                        <option key="{line}" value=13>13 Line</option>
+                        <option key="{line}" value=12>12 Line</option>
+                        <option key="{line}" value=11>11 Line</option>
+                        <option key="{line}" value=10>10 Line</option>
+                        <option key="{line}" value=9>9 Line</option>
                         <!-- ))} -->
                     </select>
                 </div>
@@ -123,12 +125,20 @@ export default {
             // this.DecodeInputData();
         },
 
+        ChangeLine(e) {
+            if (e.target.options.selectedIndex > -1) {
+                this.currentGameIndex = Number(e.target.options[e.target.options.selectedIndex]._value) - 9;
+            }
+            this.destroyAllAndCreateNew();
+            // this.setEnvironmentAccordingToSimulation(this.currentGameIndex);
+        },
+
         DecodeInputData() {
             let currentConfiguration = this.configurationData[this.currentGameIndex];
-            let numberOfBalls = 16;
+            let numberOfBalls = 10;
             let finalPosArr = []
             for (let i = 0; i <= numberOfBalls; i++) {
-                finalPosArr.push(i);
+                finalPosArr.push(7);
             }
 
 
@@ -146,7 +156,7 @@ export default {
                     index++;
                     this.lastIndex = index;
                     clearTimeout(ballDropTimeOut);
-                }, 100 * ctr, this);
+                }, 500 * ctr, this);
                 ctr++;
             }
         },
@@ -183,6 +193,8 @@ export default {
         },
 
         animateBottomMultiplier(ball, index) {
+            this.historyArr.push(this.multiplierText[index]);
+            this.startMovingMultiplier();
             let _this = this;
             if (index < 0) {
                 index = 0;
@@ -190,11 +202,10 @@ export default {
             if (index > this.numberOfrow) {
                 index = this.numberOfrow;
             }
-            // this.simulationData[this.currentGameIndex][index].push(ball.initialXpos);
             let animatedObj1 = this.bottomMultiplier[index];
             let animatedObj2 = this.multiplierText[index];
-            animatedObj1.position.set(this.ballPositions[this.numberOfrow][index].x + this.ballDistance / 2 + 3, this.ballPositions[this.numberOfrow][index].y - this.ballDistance / 2);
-            animatedObj2.position.set(this.ballPositions[this.numberOfrow][index].x + this.ballDistance - 3, this.ballPositions[this.numberOfrow][index].y - this.ballDistance / 2 + 7.5);
+            animatedObj1.position.set(this.ballPositions[this.numberOfrow][index].x + this.ballDistance / 2 + this.ballSizeEnv + 2, this.ballPositions[this.numberOfrow][index].y - this.ballDistance / 2);
+            animatedObj2.position.set(this.ballPositions[this.numberOfrow][index].x + this.ballDistance + this.ballSizeEnv - 5, this.ballPositions[this.numberOfrow][index].y - this.ballDistance / 2 + 7.5);
 
             let yPos1 = animatedObj1.y;
             let yPos2 = animatedObj2.y;
@@ -238,9 +249,9 @@ export default {
             this.bottomMultiplier = [];
             this.multiplierText = [];
             for (let i = 0; i <= this.numberOfrow; i++) {
-                this.bottomMultiplier[i] = new PIXI.Graphics()
-                this.bottomMultiplier[i].beginFill(0xffffff, 1).drawRoundedRect(0, 0, this.ballDistance - 3, 30, 10);
-                this.bottomMultiplier[i].position.set(this.ballPositions[this.numberOfrow][i].x + this.ballDistance / 2 + 3, this.ballPositions[this.numberOfrow][i].y - this.ballDistance / 2);
+                this.bottomMultiplier[i] = new PIXI.Graphics();
+                this.bottomMultiplier[i].beginFill(0xFFA500, 1).drawRoundedRect(0, 0, this.ballDistance - 3, 30, 10);
+                this.bottomMultiplier[i].position.set(this.ballPositions[this.numberOfrow][i].x + this.ballDistance / 2 + this.ballSizeEnv + 2, this.ballPositions[this.numberOfrow][i].y - this.ballDistance / 2);
                 this.bottomMultiplier[i].pivot.set(this.ballSizeEnv, this.ballSizeEnv);
                 this.multiplierText[i] = new PIXI.Text("", {
                     fontSize: 12,
@@ -254,7 +265,7 @@ export default {
                 this.multiplierText[i].text = i;
                 this.multiplierText[i].anchor.set(0.5);
 
-                this.multiplierText[i].position.set(this.ballPositions[this.numberOfrow][i].x + this.ballDistance - 3, this.ballPositions[this.numberOfrow][i].y - this.ballDistance / 2 + 7.5);
+                this.multiplierText[i].position.set(this.ballPositions[this.numberOfrow][i].x + this.ballDistance + this.ballSizeEnv - 5, this.ballPositions[this.numberOfrow][i].y - this.ballDistance / 2 + 7.5);
                 this.mainContainer.addChild(this.bottomMultiplier[i]);
                 this.mainContainer.addChild(this.multiplierText[i]);
             }
@@ -401,8 +412,88 @@ export default {
         },
 
 
-        animateWin() {
+        createHistory() {
+            this.historyComponent = [];
+            let mask = new PIXI.Graphics();
+            mask.beginFill(0xfff, 1).drawRoundedRect(0, 0, 50, 200, 20);
+            mask.alpha = 0.5;
+            mask.position.set(50, 50);
 
+
+            for (let i = 0; i < 6; i++) {
+                let rect = new PIXI.Graphics();
+                rect.beginFill(0xFFA500, 1).drawRect(0, 0, 50, 50);
+                rect.position.set(50, i * 50);
+
+                let text = new PIXI.Text("25", {
+                    fontSize: 18,
+                    align: "right",
+                    lineHeight: 30,
+                    fontWeight: 'bold',
+                    wordWrapWidth: this.ballDistance,
+                    fill: ['#000']
+                });
+                text.anchor.set(0.5);
+                text.position.set(50 + 25, i * 50 + 25);
+                text.name = "history" + i;
+
+                let rectborder = new PIXI.Graphics();
+                rectborder.beginFill(0x000, 1).drawRect(0, 0, 45, 0.5);
+                rectborder.position.set(50 + 2.5, i * 50);
+                rectborder.name = "rectborder" + i;
+
+                this.historyComponent[i] = { rect: rect, text: text, rectborder: rectborder };
+                this.historyContainer.addChild(rect);
+                this.historyContainer.addChild(text);
+                this.historyContainer.addChild(rectborder);
+            }
+            this.historyContainer.addChild(mask);
+            this.historyContainer.mask = mask;
+        },
+
+        startMovingMultiplier() {
+            if (this.historyIndex < this.historyArr.length && !this.isHistoryMoving && this.historyArr[this.historyIndex]) {
+                this.moveHistory(this.historyArr[this.historyIndex].text, 0);
+            }
+        },
+
+        moveHistory(value, i) {
+            this.isHistoryMoving = true;
+            this.historyComponent[0] = this.historyComponent[5];
+
+            this.historyComponent[0].rect.position.set(50, i * 50);
+            this.historyComponent[0].text.position.set(50 + 25, i * 50 + 25);
+            this.historyComponent[0].text.text = value;
+            this.historyComponent[0].rectborder.position.set(50 + 2.5, i * 50);
+
+            for (let i = 5; i > 0; i--) {
+                this.historyComponent[i] = this.historyComponent[i - 1];
+            }
+            for (let i = 0; i < 6; i++) {
+                this.moveHistoryDown(this.historyComponent[i].rect, 0, i);
+                this.moveHistoryDown(this.historyComponent[i].text, 1, i);
+                this.moveHistoryDown(this.historyComponent[i].rectborder, 2, i);
+            }
+        },
+
+
+        moveHistoryDown(animObj, index, symbolIndex) {
+            this.isHistoryMoving = true;
+            let tween = gsap.to(animObj.position, {
+                duration: 0.2,
+                x: animObj.x,
+                y: animObj.y + 50
+            });
+            tween.play();
+            let _this = this;
+            let timoutPlayHistory = setTimeout(() => {
+                if (index === 2 && symbolIndex === 5) {
+                    _this.isHistoryMoving = false;
+                    _this.historyIndex++;
+                    _this.startMovingMultiplier();
+                    clearTimeout(timoutPlayHistory);
+                }
+            }, 210);
         },
 
         resize() {
@@ -413,12 +504,13 @@ export default {
                 this.mainContainer.scale.set(1);
             }
             this.mainContainer.position.set((this.$refs.plinkoDiv.clientWidth - this.mainContainer.width) / 2, (this.$refs.plinkoDiv.clientHeight - this.mainContainer.height) / 2);
-
+            this.historyContainer.position.set(this.$refs.plinkoDiv.clientWidth - 200, (this.$refs.plinkoDiv.clientHeight - this.historyContainer.height) / 2);
         }
     },
 
     mounted() {
-        this.gameApp = new PIXI.Application({backgroundColor: 0x000000, antialias: true,
+        this.gameApp = new PIXI.Application({
+            backgroundColor: 0x000000, antialias: true,
             resolution: 1
         });
 
@@ -430,15 +522,20 @@ export default {
         this.EngineObj = Matter.Engine.create();
         this.WorldObject = this.EngineObj.world;
         this.mainContainer = new PIXI.Container();
+        this.historyContainer = new PIXI.Container();
         this.currentGameIndex = 7;
         this.pathArrBall = [];
         this.dropBallsArr = [];
         this.simulationData = [];
         this.destroyed = false;
         this.gameApp.stage.addChild(this.mainContainer);
+        this.gameApp.stage.addChild(this.historyContainer);
         this.numberOfrow = 9;
         let rows = this.numberOfrow;
-
+        this.historyArr = [];
+        this.historyIndex = 0;
+        this.isHistoryMoving = false;
+        this.createHistory();
         this.gameApp.ticker.add(this.updatePos.bind(this));
         let _this = this;
         window.addEventListener('resize', function (event) {
