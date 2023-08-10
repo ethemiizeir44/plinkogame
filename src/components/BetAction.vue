@@ -113,6 +113,7 @@ export default {
         setEnvironmentAccordingToSimulation(index) {
             this.destroyed = false;
             this.ballsDropped = 0;
+            this.lastIndex = 0;
             this.ballPositions = [];
             this.dropBallsArr = [];
             this.numberOfrow = 9 + index;
@@ -135,30 +136,10 @@ export default {
 
         DecodeInputData() {
             let currentConfiguration = this.configurationData[this.currentGameIndex];
-            let numberOfBalls = 10;
-            let finalPosArr = []
-            for (let i = 0; i <= numberOfBalls; i++) {
-                finalPosArr.push(7);
-            }
-
-
-            let index = 0;
-            let ctr = 0;
-            this.dropBallsArr = [];
-            this.lastIndex = 0;
-            let xPosArr = [];
-            for (let i = 0; i < numberOfBalls; i++) {
-                let reqConfig = currentConfiguration[finalPosArr[i]];
-                let inputIndex = Math.floor(Math.random() * reqConfig.length);
-                xPosArr.push(reqConfig[inputIndex]);
-                let ballDropTimeOut = setTimeout(() => {
-                    this.createdropBall(index, xPosArr[index]);
-                    index++;
-                    this.lastIndex = index;
-                    clearTimeout(ballDropTimeOut);
-                }, 500 * ctr, this);
-                ctr++;
-            }
+            let reqConfig = currentConfiguration[7];
+            let inputIndex = Math.floor(Math.random() * reqConfig.length);
+            this.createdropBall(this.lastIndex, reqConfig[inputIndex]);
+            this.lastIndex++;
         },
 
         simulation() {
@@ -460,7 +441,6 @@ export default {
         moveHistory(value, i) {
             this.isHistoryMoving = true;
             this.historyComponent[0] = this.historyComponent[5];
-
             this.historyComponent[0].rect.position.set(50, i * 50);
             this.historyComponent[0].text.position.set(50 + 25, i * 50 + 25);
             this.historyComponent[0].text.text = value;
@@ -468,7 +448,9 @@ export default {
 
             for (let i = 5; i > 0; i--) {
                 this.historyComponent[i] = this.historyComponent[i - 1];
+                this.historyComponent[i].rect.beginFill(0xFFA500, 1).drawRect(0, 0, 50, 50);
             }
+            this.historyComponent[0].rect.beginFill(0xFF0000, 1).drawRect(0, 0, 50, 50);
             for (let i = 0; i < 6; i++) {
                 this.moveHistoryDown(this.historyComponent[i].rect, 0, i);
                 this.moveHistoryDown(this.historyComponent[i].text, 1, i);
