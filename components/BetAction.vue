@@ -136,7 +136,7 @@ export default {
 
       DecodeInputData() {
           let currentConfiguration = this.configurationData[this.currentGameIndex];
-          let reqConfig = currentConfiguration[2];
+          let reqConfig = currentConfiguration[7];
           let inputIndex = Math.floor(Math.random() * reqConfig.length);
           this.createdropBall(this.lastIndex, reqConfig[inputIndex]);
           this.lastIndex++;
@@ -220,7 +220,7 @@ export default {
               tween4.play();
               tween4.eventCallback("onComplete", () => {
                   if (this.ballsDropped === _this.lastIndex && this.destroyed === false) {
-                      _this.destroyAllAndCreateNew();
+                    //   _this.destroyAllAndCreateNew();
                   }
               });
           }, [], this);
@@ -480,7 +480,7 @@ export default {
 
       resize() {
           if (this.$refs.plinkoDiv.clientWidth < 540) {
-              this.mainContainer.scale.set(0.65);
+              this.mainContainer.scale.set(0.5);
           }
           else {
               this.mainContainer.scale.set(1);
@@ -505,7 +505,7 @@ export default {
       this.WorldObject = this.EngineObj.world;
       this.mainContainer = new PIXI.Container();
       this.historyContainer = new PIXI.Container();
-      this.currentGameIndex = 2;
+      this.currentGameIndex = 7;
       this.pathArrBall = [];
       this.dropBallsArr = [];
       this.simulationData = [];
