@@ -110,6 +110,10 @@ export default {
     setup(props) { },
 
     methods: {
+        /**
+         * Create the pins for our environment according to the number of rows
+         * @param index the game index
+         */
         setEnvironmentAccordingToSimulation(index) {
             this.destroyed = false;
             this.ballsDropped = 0;
@@ -121,11 +125,14 @@ export default {
             this.ballDistance = 512 / this.numberOfrow;
             this.ballSize = 7 + (16 - this.numberOfrow) / 2.5;
             this.ballSizeEnv = 5 + (16 - this.numberOfrow) / 2.5;
-            this.createEnvironmentBlocks(this.numberOfrow, this.numberOfColsInitial, this.ballSize, [100, 200]);
+            this.createEnvironmentBlocks(this.numberOfrow, this.numberOfColsInitial);
             this.createBoundary();
             // this.DecodeInputData();
         },
-
+        /**
+         * set the game index according to the selected number of lines
+         * @param e event on click
+         */
         ChangeLine(e) {
             if (e.target.options.selectedIndex > -1) {
                 this.currentGameIndex = Number(e.target.options[e.target.options.selectedIndex]._value) - 9;
@@ -133,46 +140,36 @@ export default {
             this.destroyAllAndCreateNew();
             // this.setEnvironmentAccordingToSimulation(this.currentGameIndex);
         },
-
+        /**
+         * set the final point of the ball before dropping
+         */
         DecodeInputData() {
             let currentConfiguration = this.configurationData[this.currentGameIndex];
             let reqConfig = currentConfiguration[7];
             let inputIndex = Math.floor(Math.random() * reqConfig.length);
-            this.createdropBall(this.lastIndex, reqConfig[inputIndex]);
+            this.createdropBall(this.lastIndex, reqConfig[inputIndex],7);
             this.lastIndex++;
         },
-
-        simulation() {
-            let xInitial = this.ballPositions[0][0].x + this.ballSize;
-            let xLast = this.ballPositions[0][2].x - this.ballSize;
-            let xPosArr = [];
-            let index = 0;
-            this.dropBallsArr = [];
-            this.lastIndex = 0;
-            for (let xPos = xInitial; xPos <= xLast; xPos += 0.1) {
-                xPosArr.push(xPos);
-                let ballDropTimeOut = setTimeout(() => {
-                    this.createdropBall(index, xPosArr[index]);
-                    index++;
-                    clearTimeout(ballDropTimeOut);
-                    this.lastIndex = index;
-                }, 3 * xPosArr.length, this);
-            }
-        },
-
+        /**
+         * change the ball position according to the position of its body which is following the physics of the body
+         */
         updatePos() {
             Matter.Engine.update(this.EngineObj);
             this.dropBallsArr.forEach((ball, index) => {
                 ball.position = ball.body.position;
-                if (ball.position.y > 490 && ball.visible) {
+                if (ball.position.y > this.bottomMultiplier[0].y - 20 && ball.visible) {
                     this.ballsDropped++;
                     ball.visible = false;
                     let finalIndex = Math.floor((ball.position.x - this.ballPositions[this.numberOfrow - 1][0].x) / this.ballDistance);
-                    this.animateBottomMultiplier(ball, finalIndex);
+                    this.animateBottomMultiplier(ball, ball.finalPoint);
                 }
             });
         },
-
+        /**
+         * after the balls drops on the multiplier we animate a bounce animation for the multiplier
+         * @param ball the ball that falls
+         * @param index the index of the multiplier where it falls
+         */
         animateBottomMultiplier(ball, index) {
             this.historyArr.push(this.multiplierText[index]);
             this.startMovingMultiplier();
@@ -225,7 +222,9 @@ export default {
                 });
             }, [], this);
         },
-
+        /** 
+         * the function generate the multipliers as per the game index or number of rows
+        */
         createBottomMultiplier() {
             this.bottomMultiplier = [];
             this.multiplierText = [];
@@ -251,8 +250,12 @@ export default {
                 this.mainContainer.addChild(this.multiplierText[i]);
             }
         },
-
-        createEnvironmentBlocks(numberRows, starterColumns, filterArr) {
+        /**
+         * this function create the pins and adds bodies to those pins so that they interact with the ball physically
+         * @param numberRows the number of row
+         * @param starterColumns the number of columns in the tops 
+         */
+        createEnvironmentBlocks(numberRows, starterColumns) {
             this.cbbodies = [];
             this.ballPositions = [];
             let cols = starterColumns;
@@ -286,61 +289,29 @@ export default {
             this.createBottomMultiplier();
             this.resize();
         },
-
-        createdropBall(i, xPos) {
+        /**
+         * this function create a ball and assigns it its initial drop position
+         * @param i the counter of the ball being dropped 
+         * @param xPos the initial x-axis position of the ball 
+         */
+        createdropBall(i, xPos,finalPoint) {
             let x = this.ballPositions[0][1].x;
             let y = this.ballPositions[0][1].y;
             this.dropBallsArr.push(new PIXI.Graphics())
             this.dropBallsArr[i].beginFill(0xff0000, 1).drawCircle(0, 0, this.ballSize).endFill();
             this.mainContainer.addChild(this.dropBallsArr[i]);
             this.dropBallsArr[i].x = xPos;
+            this.dropBallsArr[i].finalPoint = finalPoint;
             this.dropBallsArr[i].indexPos = i;
             this.dropBallsArr[i].y = y - 30;
             this.dropBallsArr[i].initialXpos = xPos;
             this.dropBallsArr[i].body = Matter.Bodies.circle(xPos, y - 30, this.ballSize, { collisionFilter: { category: 0x0002, mask: 0x0001 }, friction: 1, restitution: 1 });
             Matter.World.add(this.WorldObject, this.dropBallsArr[i].body);
-        },
-
-        createPath(finalPoint, filterArr, index, filterArrLines) {
-            let path = [];
-
-            let offset = 0;
-            let x1 = offset + this.ballDistance * (finalPoint + 1) - 5;
-            let y1 = this.numberOfrow * this.ballDistance;
-
-
-            let offset2 = ((this.numberOfrow - 11) * this.ballDistance) / 2;
-            let x2 = offset2 + this.ballDistance * (finalPoint) - 5;
-            let y2 = (this.numberOfrow - 1) * this.ballDistance;
-
-            let offset3 = ((this.numberOfrow - 11) * this.ballDistance) / 2;
-            let x3 = offset2 + this.ballDistance * (finalPoint + 1) - 5;
-            let y3 = (this.numberOfrow - 1) * this.ballDistance;
-
-
-            let angle = Math.atan2(y2 - y1, x2 - x1);
-            let angle2 = Math.atan2(y3 - y1, x3 - x1);
-
-            let leftLine = new PIXI.Graphics();
-            leftLine.beginFill(0xffffff, 1).drawRect(0, 0, 3000, 5);
-            leftLine.position.set(x1, y1);
-            leftLine.rotation = angle;
-            let rightLine = new PIXI.Graphics();
-            rightLine.beginFill(0xffffff, 1).drawRect(0, 0, 3000, 5);
-            rightLine.position.set(x1, y1);
-            rightLine.rotation = angle2;
-            this.mainContainer.addChild(leftLine);
-            this.mainContainer.addChild(rightLine);
-            let leftRect = Matter.Bodies.rectangle(x1, y1, 3000, 5);
-            let rightRect = Matter.Bodies.rectangle(x1, y1, 3000, 5);
-            leftRect.collisionFilter.groupVal = filterArr[index];
-            rightRect.collisionFilter.groupVal = filterArr[index];
-            Matter.Body.rotate(leftRect, angle);
-            Matter.Body.rotate(rightRect, angle2);
-            Matter.World.add(this.WorldObject, leftRect);
-            Matter.World.add(this.WorldObject, rightRect);
-        },
-
+        },        
+        
+        /**
+         * this creates a boundary for the balls to not go outside the bounds of the pins
+         */
         createBoundary() {
             let pos1 = this.ballPositions[0][0];
             let pos2 = this.ballPositions[this.numberOfrow - 1][0];
@@ -371,28 +342,21 @@ export default {
 
         },
 
+        /**
+         * when we select a new number of rows with the select button we first destroy all the previous data, 
+         * balls and pins to prevent memoryload here
+         */
         destroyAllAndCreateNew() {
             this.destroyed = true;
             Matter.World.clear(this.WorldObject);
             this.mainContainer.removeChildren();
             let _this = this;
             _this.setEnvironmentAccordingToSimulation(this.currentGameIndex);
-            // setTimeout(()=>{
-            //     if(this.currentGameIndex<=6){
-            //         _this.setEnvironmentAccordingToSimulation(++this.currentGameIndex);
-            //     }
-            //     else{
-            //         console.log(JSON.stringify(_this.simulationData));
-            //     }
-            // },1000);
-            // this.setEnvironmentAccordingToSimulation(++this.currentGameIndex);
         },
 
-        hideBalls() {
-            this.mainContainer.removeChildren();
-        },
-
-
+        /**
+         * this function creates history component
+         */
         createHistory() {
             this.historyComponent = [];
             let mask = new PIXI.Graphics();
@@ -432,12 +396,21 @@ export default {
             this.historyContainer.mask = mask;
         },
 
+
+        /**
+         * this function is called whenever a ball touches our multiplier to now signal the histoy to update
+         */
         startMovingMultiplier() {
             if (this.historyIndex < this.historyArr.length && !this.isHistoryMoving && this.historyArr[this.historyIndex]) {
                 this.moveHistory(this.historyArr[this.historyIndex].text, 0);
             }
         },
 
+        /**
+         * 
+         * @param value the value of the multiplier
+         * @param i it is the index where we add it before moving
+         */
         moveHistory(value, i) {
             this.isHistoryMoving = true;
             this.historyComponent[0] = this.historyComponent[5];
@@ -458,7 +431,12 @@ export default {
             }
         },
 
-
+        /**
+         * moves individual history blocks
+         * @param animObj the history block
+         * @param index determines the type of block(rect, its text, and its border)
+         * @param symbolIndex this index of the block
+         */
         moveHistoryDown(animObj, index, symbolIndex) {
             this.isHistoryMoving = true;
             let tween = gsap.to(animObj.position, {
@@ -477,7 +455,9 @@ export default {
                 }
             }, 210);
         },
-
+        /**
+         * the resize code for the game still undex work
+         */
         resize() {
             if (window.outerWidth < 540) {
                 this.mainContainer.scale.set(0.5);
@@ -510,10 +490,8 @@ export default {
         this.WorldObject = this.EngineObj.world;
         this.mainContainer = new PIXI.Container();
         this.historyContainer = new PIXI.Container();
-        this.currentGameIndex = 7;
-        this.pathArrBall = [];
-        this.dropBallsArr = [];
-        this.simulationData = [];
+        this.currentGameIndex = 0;// the index of the game(number of rows = currentGameIndex+9)
+        this.dropBallsArr = [];// the array of the balls being dropped
         this.destroyed = false;
         this.gameApp.stage.addChild(this.mainContainer);
         this.gameApp.stage.addChild(this.historyContainer);
