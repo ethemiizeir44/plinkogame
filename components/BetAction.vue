@@ -1,9 +1,18 @@
 <template>
-    <div className="flex h-fit flex-col-reverse items-center justify-center gap-4 md:flex-row">
-        <div className="relative h-1/2 w-full flex-1 px-4 py-8 ">
-            Manual
+    <div className="flex h-fit flex-col-reverse items-center justify-center gap-4 md:flex-row" v-bind:style="{ 'position':'relative'}">
+        <div
+                className="buttons_selection" v-bind:style="{ 'position': 'absolute','display': 'flex', 'flex-direction':'row','left':'0','top':'203px' }">
+            <button class="filter-button" @click="ShowManual()">
+                Manual
+            </button>
+            <button class="filter-button" @click="ShowAutomatic()" v-bind:style="{ 'margin-left':'100px'}">
+                Automatic
+            </button>
+        </div>
+        <div className="relative h-1/2 w-full flex-1 px-4 py-8 " v-bind:style="{ 'display': displayManual }">
             <div
-                className="flex h-full flex-col gap-4 rounded-md bg-primary p-4 text-text md:justify-between betaction_back">
+                className="flex h-full flex-col gap-4 rounded-md bg-primary p-4 text-text md:justify-between betaction_back" v-bind:style="{ 'display': displayManual }">
+                
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row items-stretch gap-1 md:flex-col">
                         <div className="w-full text-sm font-bold md:text-base">
@@ -55,10 +64,10 @@
                 </button>
             </div>
         </div>
-        <div className="relative h-1/2 w-full flex-1 px-4 py-8 ">
-            Autoplay
+        <div className="relative h-1/2 w-full flex-1 px-4 py-8 " v-bind:style="{ 'display': displayAutomatic }">
             <div
-                className="flex h-full flex-col gap-4 rounded-md bg-primary p-4 text-text md:justify-between betaction_back">
+                className="flex h-full flex-col gap-4 rounded-md bg-primary p-4 text-text md:justify-between betaction_back" v-bind:style="{ 'display': displayAutomatic }">
+                
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row items-stretch gap-1 md:flex-col">
                         <div className="w-full text-sm font-bold md:text-base">
@@ -147,6 +156,8 @@ export default {
             worldWidth: 800,
             startPins: 3,
             pinLines: 14,
+            displayManual: "block",
+            displayAutomatic: "none",
             pinSize: 1 * SCENE_SCALE,
             pinGap: 15 * SCENE_SCALE,
             ballSize: 4 * SCENE_SCALE,
@@ -162,6 +173,15 @@ export default {
     setup(props) { },
 
     methods: {
+
+        ShowAutomatic(){
+            this.displayManual = "none";
+            this.displayAutomatic = "block";
+        },
+        ShowManual(){
+            this.displayManual = "block";
+            this.displayAutomatic = "none";
+        },
         /**
          * Create the pins for our environment according to the number of rows
          * @param index the game index
