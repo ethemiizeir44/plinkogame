@@ -1,18 +1,17 @@
 <template>
     <div className="flex h-fit flex-col-reverse items-center justify-center gap-4 md:flex-row" v-bind:style="{ 'position':'relative'}">
         <div
-                className="buttons_selection" v-bind:style="{ 'position': 'absolute','display': 'flex', 'flex-direction':'row','left':'0','top':'203px' }">
-            <button class="filter-button" @click="ShowManual()">
+                className="buttons_selection" v-bind:style="{ 'position': 'absolute','display': 'flex', 'flex-direction':'row','left':'27px','top':'143px' }">
+            <button class="filter-button" @click="ShowManual()" v-bind:style="{ 'z-index': 9999999999}">
                 Manual
             </button>
-            <button class="filter-button" @click="ShowAutomatic()" v-bind:style="{ 'margin-left':'100px'}">
+            <button class="filter-button" @click="ShowAutomatic()" v-bind:style="{ 'margin-left':'205px','z-index': 9999999999}">
                 Automatic
             </button>
         </div>
         <div className="relative h-1/2 w-full flex-1 px-4 py-8 " v-bind:style="{ 'display': displayManual }">
             <div
                 className="flex h-full flex-col gap-4 rounded-md bg-primary p-4 text-text md:justify-between betaction_back" v-bind:style="{ 'display': displayManual }">
-                
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row items-stretch gap-1 md:flex-col">
                         <div className="w-full text-sm font-bold md:text-base">
@@ -227,8 +226,6 @@ export default {
                 for (let i = 0; i < numberOfBalls; i++) {
                     finalPosArr.push(Math.floor(Math.random() * (this.currentGameIndex + 10)));
                 }
-
-
                 let ctr = 0;
                 let xPosArr = [];
                 let index=0;
@@ -566,7 +563,7 @@ export default {
          */
         resize() {
             if (window.outerWidth < 540) {
-                this.mainContainer.scale.set(0.5);
+                this.mainContainer.scale.set(0.65);
                 this.historyContainer && this.historyContainer.position.set(window.innerWidth, 0);
                 this.mainContainer.position.set((window.innerWidth - this.mainContainer.width) / 2, 100);
             }
