@@ -247,10 +247,11 @@ export default {
          * set the final point of the ball before dropping
          */
         DecodeInputData() {
+            let finalPos= 7;
             let currentConfiguration = this.configurationData[this.currentGameIndex];
-            let reqConfig = currentConfiguration[7];
+            let reqConfig = currentConfiguration[finalPos];
             let inputIndex = Math.floor(Math.random() * reqConfig.length);
-            this.createdropBall(this.lastIndex, reqConfig[inputIndex],7);
+            this.createdropBall(this.lastIndex, reqConfig[inputIndex],finalPos);
             this.lastIndex++;
         },
         /**
