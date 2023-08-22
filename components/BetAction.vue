@@ -16,17 +16,17 @@
                     <div className="flex flex-row items-stretch gap-1 md:flex-col">
                         <div className="w-full text-sm font-bold md:text-base">
                             <div className="flex flex-1 items-stretch justify-between">
-                                <span>Bet amount</span>
+                                <span>Bet Amount</span>
                                 <div className="flex items-center gap-1">
                                     <div className="rounded-full bg-purpleDark p-0.5">
                                         <CurrencyDollarSimple weight="bold" />
                                     </div>
-                                    <span>23</span>
+
                                 </div>
                             </div>
                             <div className="flex items-stretch justify-center shadow-md">
                                 <input type="number" v-model="count"
-                                    className="w-full rounded-bl-md rounded-tl-md border-2 border-secondary bg-background p-2.5 px-4 font-bold transition-colors placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none md:p-2" />
+                                    className="w-full rounded-bl-md rounded-tl-md border-2 border-secondary bg-background p-2.5 px-4 font-bold transition-colors placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none md:p-2" style="color:#000;"/>
                                 <button @click="halfDivide()"
                                     className="relative border-2 border-transparent bg-secondary p-2.5 px-3 transition-colors after:absolute after:right-0 write-coler after:top-[calc(50%_-_8px)] after:h-4 after:w-0.5 after:rounded-lg after:bg-background after:content-[''] hover:bg-secondary/80 focus:border-purple focus:outline-none md:p-2">
                                     ½
@@ -42,8 +42,9 @@
                             </div>
                         </div>
                     </div>
+                    <div>
                     <select defaultValue="{16}"
-                        className="w-full rounded-md border-2 border-secondary bg-background px-4 py-2 font-bold transition-all placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none disabled:line-through disabled:opacity-80"
+                        className="w-full rounded-md border-2 border-secondary bg-background px-4 py-2 font-bold transition-all placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none disabled:line-through disabled:opacity-80" style="Color: #000;"
                         id="lines" @change="ChangeLine">
                         <!-- {linesOptions.map(line => ( -->
                         <option key="{line}" value=16>16 Line</option>
@@ -56,27 +57,50 @@
                         <option key="{line}" value=9>9 Line</option>
                         <!-- ))} -->
                     </select>
+                  </div>
+                  <div>
+                    <select defaultValue="{high}"
+                        className="w-full rounded-md border-2 border-secondary bg-background px-4 py-2 font-bold transition-all placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none disabled:line-through disabled:opacity-80" style="Color: #000;"
+                        id="lines">
+                        <!-- {linesOptions.map(line => ( -->
+                        <option value=high>High Risk</option>
+                        <option value=medium>Medium Risk</option>
+                        <option value=low>Low Risk</option>
+
+                        <!-- ))} -->
+                    </select>
+                  </div>
                 </div>
-                <button @click="DecodeInputData()"
-                    className="hidden rounded-md bg-purple px-6 py-5 font-bold leading-none text-background transition-colors hover:bg-purpleDark focus:outline-none focus:ring-1 focus:ring-purple focus:ring-offset-1 focus:ring-offset-primary disabled:bg-gray-500 md:visible md:block">
-                    Bet
-                </button>
+
+<!--
+                <VButton @click="DecodeInputData()"
+                    className="hidden rounded-md bg-purple px-6 py-5 font-bold leading-none text-background transition-colors hover:bg-purpleDark focus:outline-none focus:ring-1 focus:ring-purple focus:ring-offset-1 focus:ring-offset-primary disabled:bg-gray-500 md:visible md:block" color="primary" size="lg">
+
+    Button
+  </VButton>
+-->
+<div style="margin-top: 30px;">
+  <a @click="DecodeInputData()" href="#" rel="noopener noreferrer" tag="a" class="cursor-pointer
+  border transition-color duration-300
+  focus:outline-none focus:ring-1 focus:ring-offset-1 focus:dark:ring-offset-gray-50 focus:dark:ring-gray-400 focus:ring-gray-600/[0.6] focus:ring-offset-gray-800/[0.6]
+  flex items-center justify-center font-semibold
+ text-white bg-primary-500 hover:bg-primary-400 border-primary-500 h-14 px-8 text-lg rounded-lg font-extrabold"><!--[-->Bet<!--]--></a></div>
             </div>
         </div>
         <div className="relative h-1/2 w-full flex-1 px-4 py-8 " v-bind:style="{ 'display': displayAutomatic }">
             <div
                 className="flex h-full flex-col gap-4 rounded-md bg-primary p-4 text-text md:justify-between betaction_back" v-bind:style="{ 'display': displayAutomatic }">
-                
+
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-row items-stretch gap-1 md:flex-col">
                         <div className="w-full text-sm font-bold md:text-base">
                             <div className="flex flex-1 items-stretch justify-between">
-                                <span>Bet amount</span>
+                                <span>Bet Amount</span>
                                 <div className="flex items-center gap-1">
                                     <div className="rounded-full bg-purpleDark p-0.5">
                                         <CurrencyDollarSimple weight="bold" />
                                     </div>
-                                    <span>23</span>
+
                                 </div>
                             </div>
                             <div className="flex items-stretch justify-center shadow-md">
@@ -97,14 +121,14 @@
                             </div>
                         </div>
                         <div className="flex items-stretch justify-center shadow-md">
-                            Number of Bets
+                            <p># of Bets</p>
                             <input type="number" @input="ChangeNumberOfDropBalls" v-model="count"
-                                className="w-full rounded-bl-md rounded-tl-md border-2 border-secondary bg-background p-2.5 px-4 font-bold transition-colors placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none md:p-2" />
+                                className="w-full rounded-bl-md rounded-tl-md border-2 border-secondary bg-background p-2.5 px-4 font-bold transition-colors placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none md:p-2" style="color:#000;"/>
                         </div>
                     </div>
                     <select defaultValue="{16}"
                         className="w-full rounded-md border-2 border-secondary bg-background px-4 py-2 font-bold transition-all placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none disabled:line-through disabled:opacity-80"
-                        id="lines" @change="ChangeLine">
+                        id="lines" style="color:#000;" @change="ChangeLine">
                         <!-- {linesOptions.map(line => ( -->
                         <option key="{line}" value=16>16 Line</option>
                         <option key="{line}" value=15>15 Line</option>
@@ -116,11 +140,30 @@
                         <option key="{line}" value=9>9 Line</option>
                         <!-- ))} -->
                     </select>
+                    <div>
+                    <select defaultValue="{high}"
+                        className="w-full rounded-md border-2 border-secondary bg-background px-4 py-2 font-bold transition-all placeholder:font-bold placeholder:text-text focus:border-purple focus:outline-none disabled:line-through disabled:opacity-80" style="Color: #000;"
+                        id="lines">
+                        <!-- {linesOptions.map(line => ( -->
+                        <option value=high>High Risk</option>
+                        <option value=medium>Medium Risk</option>
+                        <option value=low>Low Risk</option>
+
+                        <!-- ))} -->
+                    </select>
+                  </div>
                 </div>
-                <button @click="DecodeInputDataAutoplay()"
+                <!--<vbutton @click="DecodeInputDataAutoplay()"
                     className="hidden rounded-md bg-purple px-6 py-5 font-bold leading-none text-background transition-colors hover:bg-purpleDark focus:outline-none focus:ring-1 focus:ring-purple focus:ring-offset-1 focus:ring-offset-primary disabled:bg-gray-500 md:visible md:block">
                     Bet
-                </button>
+                </vbutton> -->
+                <div style="margin-top: 30px;">
+                <a @click="DecodeInputDataAutoplay()" href="#" rel="noopener noreferrer" tag="a" class="cursor-pointer
+  border transition-color duration-300
+  focus:outline-none focus:ring-1 focus:ring-offset-1 focus:dark:ring-offset-gray-50 focus:dark:ring-gray-400 focus:ring-gray-600/[0.6] focus:ring-offset-gray-800/[0.6]
+  flex items-center justify-center font-semibold
+ text-white bg-primary-500 hover:bg-primary-400 border-primary-500 h-14 px-8 text-lg rounded-lg font-extrabold"><!--[-->Start Autobet<!--]--></a>
+ </div>
             </div>
         </div>
         <div className="flex flex-1 items-center justify-center">
@@ -247,7 +290,7 @@ export default {
          * set the final point of the ball before dropping
          */
         DecodeInputData() {
-            let finalPos= 7;
+            let finalPos= 16;
             let currentConfiguration = this.configurationData[this.currentGameIndex];
             let reqConfig = currentConfiguration[finalPos];
             let inputIndex = Math.floor(Math.random() * reqConfig.length);
@@ -326,7 +369,7 @@ export default {
                 });
             }, [], this);
         },
-        /** 
+        /**
          * the function generate the multipliers as per the game index or number of rows
         */
         createBottomMultiplier() {
@@ -357,7 +400,7 @@ export default {
         /**
          * this function create the pins and adds bodies to those pins so that they interact with the ball physically
          * @param numberRows the number of row
-         * @param starterColumns the number of columns in the tops 
+         * @param starterColumns the number of columns in the tops
          */
         createEnvironmentBlocks(numberRows, starterColumns) {
             this.cbbodies = [];
@@ -395,8 +438,8 @@ export default {
         },
         /**
          * this function create a ball and assigns it its initial drop position
-         * @param i the counter of the ball being dropped 
-         * @param xPos the initial x-axis position of the ball 
+         * @param i the counter of the ball being dropped
+         * @param xPos the initial x-axis position of the ball
          */
         createdropBall(i, xPos,finalPoint) {
             let x = this.ballPositions[0][1].x;
@@ -411,8 +454,8 @@ export default {
             this.dropBallsArr[i].initialXpos = xPos;
             this.dropBallsArr[i].body = Matter.Bodies.circle(xPos, y - 30, this.ballSize, { collisionFilter: { category: 0x0002, mask: 0x0001 }, friction: 1, restitution: 1 });
             Matter.World.add(this.WorldObject, this.dropBallsArr[i].body);
-        },        
-        
+        },
+
         /**
          * this creates a boundary for the balls to not go outside the bounds of the pins
          */
@@ -447,7 +490,7 @@ export default {
         },
 
         /**
-         * when we select a new number of rows with the select button we first destroy all the previous data, 
+         * when we select a new number of rows with the select button we first destroy all the previous data,
          * balls and pins to prevent memoryload here
          */
         destroyAllAndCreateNew() {
@@ -511,7 +554,7 @@ export default {
         },
 
         /**
-         * 
+         *
          * @param value the value of the multiplier
          * @param i it is the index where we add it before moving
          */
@@ -615,4 +658,21 @@ export default {
         this.setEnvironmentAccordingToSimulation(this.currentGameIndex);
     },
 };
+
+  import { ref } from 'vue'
+  import {
+    Listbox,
+    ListboxButton,
+    ListboxOptions,
+    ListboxOption,
+  } from '@headlessui/vue'
+
+  const people = [
+    { id: 1, name: 'Durward Reynolds', unavailable: false },
+    { id: 2, name: 'Kenton Towne', unavailable: false },
+    { id: 3, name: 'Therese Wunsch', unavailable: false },
+    { id: 4, name: 'Benedict Kessler', unavailable: true },
+    { id: 5, name: 'Katelyn Rohan', unavailable: false },
+  ]
+  const selectedPerson = ref(people[0])
 </script>
