@@ -1,6 +1,6 @@
 <template>
     <div className="flex h-fit flex-col-reverse items-center justify-center gap-4 md:flex-row"
-        v-bind:style="{ 'position': 'relative' }">
+        v-bind:style="{ 'position': 'relative','max-width':'100%' }">
         <div className="buttons_selection"
             v-bind:style="{ 'position': 'absolute', 'display': 'flex', 'flex-direction': 'row', 'left': '27px', 'top': '143px' }">
             <button class="filter-button" @click="ShowManual()" v-bind:style="{ 'z-index': 9999999999 }">
@@ -173,8 +173,8 @@
                 </div>
             </div>
         </div>
-        <div className="flex flex-1 items-center justify-center">
-            <div id="plinko" ref="plinkoDiv"></div>
+        <div className="flex flex-1 items-center justify-center" v-bind:style="{'max-width': '100%'}">
+            <div id="plinko" ref="plinkoDiv" v-bind:style="{ 'width': '800px','height':'600px','max-width': '100%'}"></div>
         </div>
     </div>
 </template>
