@@ -36,6 +36,104 @@ html.dark {
   }
 }
 
+.mainContainer {
+  position: relative;
+  max-width: 100%;
+  display: flex;
+  flex-flow: row;
+}
+.selectionButtons{
+  width: calc(100% - 800px);
+  background-color: #213743;
+  max-width: 300px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.manualAuto{
+  display: flex;
+  flex-direction: row;
+  padding: 10x;
+  border-radius: 35px;
+  background-color: #0f212e;
+}
+
+.filter-button{
+  width:50%;
+  border-radius: 35px;
+  padding: 10px;
+  border: none;
+  margin: 5px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.filter-button.selected{
+  background-color: #213743;
+}
+
+.filter-button.playing{
+  cursor: none;
+  pointer-events: none;
+}
+
+.filter-button:hover{
+  background-color: #213743;
+}
+
+.manualSection{
+  display: flex;
+  flex-direction: column;
+}
+
+.inputFormat{
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+.InputTextLabel{
+  color:#fff;
+}
+.InputTextVal{
+  background-color: #0f212e;
+  color: #fff;
+  padding: 6px;
+  font-size: 13px;
+  border: 2px solid #2f4553;
+  border-radius: 7px;
+}
+
+a.betbutton {
+  min-width: 100%;
+  color: #fff;
+  background: #61b33b;
+  padding: 15px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+a.betbutton.playing {
+  pointer-events: none;
+}
+
+a.betbutton:hover {
+  transition: 0.3s ease;
+  background: #00e701;
+}
+
+button.sideButton {
+  color: #fff;
+  font-size: 12px;
+  padding-top: 2px;
+  padding-right: 5px;
+  border-left: 1px solid gray;
+  padding-left: 5px;
+}
+
+
+
 
 // components
 @import 'animations/transitions';
