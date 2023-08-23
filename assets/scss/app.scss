@@ -133,6 +133,23 @@ button.sideButton {
 }
 
 
+@media only screen and (max-width: 1000px) {
+  .mainContainer{
+    display: flex;
+    flex-direction: column-reverse;
+    flex-flow: column-reverse;
+  }
+  .selectionButtons{
+    min-width: 100%;
+  }
+  .plinkoGameContainer{
+    height: 70vh;
+  }
+  #plinko{
+    max-height: 100%;
+  }
+}
+
 
 
 // components
