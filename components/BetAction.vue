@@ -668,8 +668,8 @@ export default {
         this.$refs.plinkoDiv.appendChild(this.gameApp.view);
         globalThis.__PIXI_APP__ = this.gameApp;
         Matter.Common._seed = 0;
-        this.EngineObj = Matter.Engine.create();
-        this.EngineObj.world.gravity.y = 0.4;
+        this.EngineObj = Matter.Engine.create({gravity:{y:0.4}});
+        // this.EngineObj.world.gravity.y = 0.4;
         this.WorldObject = this.EngineObj.world;
         this.mainContainer = new PIXI.Container();
         this.historyContainer = new PIXI.Container();
