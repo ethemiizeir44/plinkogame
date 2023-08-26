@@ -303,12 +303,15 @@ export default {
                     ball.position.x = ball.positionArray[ball.positionIndex].x;
                     ball.position.y = ball.positionArray[ball.positionIndex++].y;
                 }
-                if (ball.position.y > this.bottomMultiplier[0].y - 20 && ball.visible) {
+                if(ball.positionIndex>=ball.positionArray.length){
                     this.ballsDropped++;
                     ball.visible = false;
                     let finalIndex = Math.floor((ball.position.x - this.ballPositions[this.numberOfrow - 1][0].x) / this.ballDistance);
                     this.animateBottomMultiplier(ball, ball.finalPoint);
                 }
+                // if (ball.position.y > this.bottomMultiplier[0].y - 20 && ball.visible) {
+                    
+                // }
             });
         },
         /**
