@@ -137,16 +137,6 @@
 </template>
 
 <script lang="ts">
-import Matter, {
-    Engine,
-    Render,
-    World,
-    Runner,
-    Bodies,
-    Composite,
-    Events,
-    Body,
-} from "matter-js";
 import * as PIXI from "pixi.js";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
@@ -157,8 +147,6 @@ const SCENE_SCALE = 1.5;
 
 export default {
     data() {
-        gsap.registerPlugin(MotionPathPlugin);
-        gsap.registerPlugin(CustomEase);
         return {
             worldWidth: 800,
             startPins: 3,
@@ -214,7 +202,6 @@ export default {
             this.ballSize = 7 + (16 - this.numberOfrow) / 2.5;
             this.ballSizeEnv = 5 + (16 - this.numberOfrow) / 2.5;
             this.createEnvironmentBlocks(this.numberOfrow, this.numberOfColsInitial);
-            this.createBoundary();
             // this.DecodeInputData();
         },
         /**
@@ -297,13 +284,12 @@ export default {
          * change the ball position according to the position of its body which is following the physics of the body
          */
         updatePos() {
-            Matter.Engine.update(this.EngineObj);
             this.dropBallsArr.forEach((ball, index) => {
                 if(ball.visible && ball.positionIndex<ball.positionArray.length){
                     ball.position.x = ball.positionArray[ball.positionIndex].x;
                     ball.position.y = ball.positionArray[ball.positionIndex++].y;
                 }
-                if(ball.positionIndex>=ball.positionArray.length){
+                if(ball.positionIndex>=ball.positionArray.length && ball.visible){
                     this.ballsDropped++;
                     ball.visible = false;
                     let finalIndex = Math.floor((ball.position.x - this.ballPositions[this.numberOfrow - 1][0].x) / this.ballDistance);
@@ -425,9 +411,6 @@ export default {
                     this.ballPositions[i][j] = { x: x, y: y };
 
                     this.cbbodies[i].push(new PIXI.Graphics());
-                    //this.cbbodies[i][j].body = Matter.Bodies.circle(x, y, this.ballSizeEnv, { collisionFilter: { category: 0x0001 }, isStatic: true, friction: 0, restitution: 1 });
-
-                    // Matter.World.add(this.WorldObject, this.cbbodies[i][j].body);
                     this.cbbodies[i][j].beginFill(0xffffff, 1).drawCircle(0, 0, this.ballSizeEnv).endFill();
                     this.cbbodies[i][j].position.set(x, y);
                     this.mainContainer.addChild(this.cbbodies[i][j]);
@@ -461,41 +444,6 @@ export default {
             this.dropBallsArr[i].positionIndex = 0;
             this.dropBallsArr[i].positionArray = positionArray;
             this.dropBallsArr[i].y = y - 30;
-            //this.dropBallsArr[i].body = Matter.Bodies.circle(xPos, y - 30, this.ballSize, { collisionFilter: { category: 0x0002, mask: 0x0001 }, friction: 0, restitution: 1 });
-            // Matter.World.add(this.WorldObject, this.dropBallsArr[i].body);
-        },
-
-        /**
-         * this creates a boundary for the balls to not go outside the bounds of the pins
-         */
-        createBoundary() {
-            let pos1 = this.ballPositions[0][0];
-            let pos2 = this.ballPositions[this.numberOfrow - 1][0];
-            let pos3 = this.ballPositions[this.numberOfrow - 1][this.numberOfrow + 1];
-            let pos4 = this.ballPositions[0][2];
-
-            let angle1 = Math.atan2(pos2.y - pos1.y, pos2.x - pos1.x);
-            let angle2 = Math.atan2(pos3.y - pos4.y, pos3.x - pos4.x);
-
-            let dist1 = Math.hypot(pos2.x - pos1.x, pos2.y - pos1.y)
-            let dist2 = Math.hypot(pos4.x - pos3.x, pos4.y - pos3.y)
-
-
-            let rect1 = Matter.Bodies.rectangle(pos1.x + Math.cos(angle1) * dist1 / 2, pos1.y + Math.sin(angle1) * dist1 / 2, dist1, 5, { collisionFilter: { category: 0x0001 }, isStatic: true, friction: 0, restitution: 1 });
-            let rect2 = Matter.Bodies.rectangle(pos4.x - Math.cos(angle1) * dist1 / 2, pos4.y + Math.sin(angle1) * dist2 / 2, dist2, 5, { collisionFilter: { category: 0x0001 }, isStatic: true, friction: 0, restitution: 1 });
-            let rect3 = Matter.Bodies.rectangle(pos2.x, pos2.y + this.ballDistance, 1000, 5, { collisionFilter: { category: 0x0001 }, isStatic: true, friction: 0, restitution: 1 });
-            let rect4 = Matter.Bodies.rectangle(pos1.x, pos1.y - 40, 5, 40, { collisionFilter: { category: 0x0001 }, isStatic: true, friction: 0, restitution: 1 });
-            let rect5 = Matter.Bodies.rectangle(pos4.x, pos4.y - 40, 5, 40, { collisionFilter: { category: 0x0001 }, isStatic: true, friction: 0, restitution: 1 });
-            Matter.Body.rotate(rect1, angle1);
-            Matter.Body.rotate(rect2, angle2);
-
-            // Matter.World.add(this.WorldObject, rect1);
-            // Matter.World.add(this.WorldObject, rect2);
-            // Matter.World.add(this.WorldObject, rect3);
-            // Matter.World.add(this.WorldObject, rect4);
-            // Matter.World.add(this.WorldObject, rect5);
-
-
         },
 
         /**
@@ -504,7 +452,6 @@ export default {
          */
         destroyAllAndCreateNew() {
             this.destroyed = true;
-            // Matter.World.clear(this.WorldObject);
             this.mainContainer.removeChildren();
             let _this = this;
             _this.setEnvironmentAccordingToSimulation(this.currentGameIndex);
@@ -671,10 +618,6 @@ export default {
         this.gameApp.stage.interactive = true;
         this.$refs.plinkoDiv.appendChild(this.gameApp.view);
         globalThis.__PIXI_APP__ = this.gameApp;
-        Matter.Common._seed = 0;
-        this.EngineObj = Matter.Engine.create({gravity:{y:0.4}});
-        // this.EngineObj.world.gravity.y = 0.4;
-        this.WorldObject = this.EngineObj.world;
         this.mainContainer = new PIXI.Container();
         this.historyContainer = new PIXI.Container();
         this.currentGameIndex = 7;// the index of the game(number of rows = currentGameIndex+9)
