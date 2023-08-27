@@ -46,6 +46,7 @@
                         <option key="{line}" value=11>11 Line</option>
                         <option key="{line}" value=10>10 Line</option>
                         <option key="{line}" value=9>9 Line</option>
+                        <option key="{line}" value=8>8 Line</option>
                         <!-- ))} -->
                     </select>
                 </div>
@@ -142,6 +143,7 @@ import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin.js";
 import positionPathArr from "@/assets/json/pathArr.json";
+import inputValues from "@/assets/json/input.json";
 
 const SCENE_SCALE = 1.5;
 
@@ -196,7 +198,7 @@ export default {
             this.lastIndex = 0;
             this.ballPositions = [];
             this.dropBallsArr = [];
-            this.numberOfrow = 9 + index;
+            this.numberOfrow = 8 + index;
             this.numberOfColsInitial = 3;
             this.ballDistance = 512 / this.numberOfrow;
             this.ballSize = 7 + (16 - this.numberOfrow) / 2.5;
@@ -210,7 +212,7 @@ export default {
          */
         ChangeLine(e) {
             if (e.target.options.selectedIndex > -1) {
-                this.currentGameIndex = Number(e.target.options[e.target.options.selectedIndex]._value) - 9;
+                this.currentGameIndex = Number(e.target.options[e.target.options.selectedIndex]._value) - 8;
             }
             this.destroyAllAndCreateNew();
             // this.setEnvironmentAccordingToSimulation(this.currentGameIndex);
@@ -236,7 +238,7 @@ export default {
                 let numberOfBalls = this.numberOfBallsAutoPlay;
                 let finalPosArr = [];
                 for (let i = 0; i < numberOfBalls; i++) {
-                    finalPosArr.push(Math.floor(Math.random() * (this.currentGameIndex + 10)));
+                    finalPosArr.push(Math.floor(Math.random() * (this.currentGameIndex + 9)));
                 }
                 let ctr = 0;
                 let xPosArr = [];
@@ -248,7 +250,19 @@ export default {
                     ctr++;
                 }
                 this.ballDropInterval = setInterval(() => {
-                    this.createdropBall(this.lastIndex, xPosArr[index], finalPosArr[index]);
+                    let input = this.inputValues[this.inputCounter++]
+                    let finalMultiplier = input.payoutMultiplier;
+                    let finalPos = 0;
+                    if(this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)){
+                        this.multiplierValues[this.currentGameIndex].indexOf(finalMultiplier);
+                    }
+                    else{
+                        finalPos = 7;
+                    }
+                    let currentConfiguration = this.configurationData[this.currentGameIndex];
+                    let reqConfig = currentConfiguration[finalPos];
+                    let inputIndex = Math.floor(Math.random() * reqConfig.length);
+                    this.createdropBall(this.lastIndex, reqConfig[inputIndex], finalPos);
                     index++;
                     this.numberOfBallsAutoPlay--;
                     this.lastIndex++;
@@ -273,12 +287,16 @@ export default {
          */
         DecodeInputData() {
             this.disableAllInputsManual();
-            let finalPos = 7;
-            let currentConfiguration = this.configurationData[this.currentGameIndex];
-            let reqConfig = currentConfiguration[finalPos];
-            let inputIndex = Math.floor(Math.random() * reqConfig.length);
-            this.createdropBall(this.lastIndex, reqConfig[inputIndex], finalPos);
-            this.lastIndex++;
+            let input = this.inputValues[this.inputCounter++]
+            let finalMultiplier = input.payoutMultiplier;
+            if(this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)){
+                let finalPos = this.multiplierValues[this.currentGameIndex].indexOf(finalMultiplier);
+                let currentConfiguration = this.configurationData[this.currentGameIndex];
+                let reqConfig = currentConfiguration[finalPos];
+                let inputIndex = Math.floor(Math.random() * reqConfig.length);
+                this.createdropBall(this.lastIndex, reqConfig[inputIndex], finalPos);
+                this.lastIndex++;
+            }
         },
         /**
          * change the ball position according to the position of its body which is following the physics of the body
@@ -371,6 +389,7 @@ export default {
             this.multiplierText = [];
             for (let i = 0; i <= this.numberOfrow; i++) {
                 this.bottomMultiplier[i] = new PIXI.Graphics();
+                this.bottomMultiplier[i].resolution=3;
                 this.bottomMultiplier[i].beginFill(0x313644, 1).drawRoundedRect(0, 0, this.ballDistance - 3, 30, 10);
                 this.bottomMultiplier[i].position.set(this.ballPositions[this.numberOfrow][i].x + this.ballDistance / 2 + this.ballSizeEnv + 2, this.ballPositions[this.numberOfrow][i].y - this.ballDistance / 2);
                 this.bottomMultiplier[i].pivot.set(this.ballSizeEnv, this.ballSizeEnv);
@@ -378,12 +397,16 @@ export default {
                     fontSize: 12,
                     align: "right",
                     lineHeight: 30,
-                    fontWeight: 'bold',
                     wordWrapWidth: this.ballDistance,
                     fill: ['#ffffff']
                 });
+                this.multiplierText[i].resolution = 2;
                 console.log(this.multiplierText[i].width);
-                this.multiplierText[i].text = i;
+
+                this.multiplierText[i].text = this.multiplierValues[this.currentGameIndex][i];
+                if(this.multiplierValues[this.currentGameIndex][i].toString().length<=2){
+                    this.multiplierText[i].text+="x";
+                }
                 this.multiplierText[i].anchor.set(0.5);
 
                 this.multiplierText[i].position.set(this.ballPositions[this.numberOfrow][i].x + this.ballDistance + this.ballSizeEnv - 5, this.ballPositions[this.numberOfrow][i].y - this.ballDistance / 2 + 7.5);
@@ -411,6 +434,7 @@ export default {
                     this.ballPositions[i][j] = { x: x, y: y };
 
                     this.cbbodies[i].push(new PIXI.Graphics());
+                    this.cbbodies[i].resolution=3;
                     this.cbbodies[i][j].beginFill(0xffffff, 1).drawCircle(0, 0, this.ballSizeEnv).endFill();
                     this.cbbodies[i][j].position.set(x, y);
                     this.mainContainer.addChild(this.cbbodies[i][j]);
@@ -435,7 +459,8 @@ export default {
         createdropBall(i, positionArray, finalPoint) {
             let x = this.ballPositions[0][1].x;
             let y = this.ballPositions[0][1].y;
-            this.dropBallsArr.push(new PIXI.Graphics())
+            this.dropBallsArr.push(new PIXI.Graphics());
+            this.dropBallsArr.resolution = 3;
             this.dropBallsArr[i].beginFill(0xff0000, 1).drawCircle(0, 0, this.ballSize).endFill();
             this.mainContainer.addChild(this.dropBallsArr[i]);
             this.dropBallsArr[i].x = 0;
@@ -470,6 +495,7 @@ export default {
 
             for (let i = 0; i < 6; i++) {
                 let rect = new PIXI.Graphics();
+                rect.resolution=3;
                 rect.beginFill(0x313644, 1).drawRect(0, 0, 50, 50);
                 rect.position.set(50, i * 50);
 
@@ -481,11 +507,13 @@ export default {
                     wordWrapWidth: this.ballDistance,
                     fill: ['#fff']
                 });
+                text.resolution = 3;
                 text.anchor.set(0.5);
                 text.position.set(50 + 25, i * 50 + 25);
                 text.name = "history" + i;
 
                 let rectborder = new PIXI.Graphics();
+                rectborder.resolution = 3;
                 rectborder.beginFill(0x000, 1).drawRect(0, 0, 45, 0.5);
                 rectborder.position.set(50 + 2.5, i * 50);
                 rectborder.name = "rectborder" + i;
@@ -611,16 +639,19 @@ export default {
         });
 
         
-        this.configurationData = positionPathArr.pathArray;
+        this.configurationData = positionPathArr;
         this.refArr = ["showManual", "ShowAutomatic", "countManual", "halfDivide", "double", "max", "countAutoplay", "halfDivideAutoplay", "doubleAutoplay", "doubleMax", "numberOfBets", "lineSelect", "riskSelect", "lineSelectAutoplay", "riskSelectAutoplay"];
         this.refArrManual = ["showManual","ShowAutomatic","countManual","halfDivide","double","max","lineSelect","riskSelect"];
         this.ballPositions = [];
+        this.multiplierValues = [[13,3,1.3,0.7,0.4,0.7,1.3,3,13],[18,4,1.7,0.9,0.5,0.5,0.8,1.7,4,18],[22,5,2,1.4,0.6,0.4,0.6,1.4,2,5,22],[24,6,3,1.8,0.7,0.5,0.5,0.7,1.8,3,6,24],[33,11,4,2,1.1,0.6,0.3,0.6,1.1,2,4,11,33],[43,13,6,3,1.3,0.7,0.4,0.4,0.7,1.3,3,6,13,43],[58,15,7,4,1.9,1,0.5,0.2,0.5,1,1.9,4,7,15,58],[88,18,11,5,3,1.3,0.5,0.3,0.3,0.5,1.3,3,5,11,18,88],[110,41,10,5,3,1.5,1,0.5,0.3,0.5,1,1.5,3,5,10,41,110]];
+        this.inputValues = inputValues;
+        this.inputCounter = 0;
         this.gameApp.stage.interactive = true;
         this.$refs.plinkoDiv.appendChild(this.gameApp.view);
         globalThis.__PIXI_APP__ = this.gameApp;
         this.mainContainer = new PIXI.Container();
         this.historyContainer = new PIXI.Container();
-        this.currentGameIndex = 7;// the index of the game(number of rows = currentGameIndex+9)
+        this.currentGameIndex = 8;// the index of the game(number of rows = currentGameIndex+9)
         this.dropBallsArr = [];// the array of the balls being dropped
         this.destroyed = false;
         this.gameApp.stage.addChild(this.mainContainer);
