@@ -250,6 +250,9 @@ export default {
                     ctr++;
                 }
                 this.ballDropInterval = setInterval(() => {
+                    if(inputCounter>=this.inputValues){
+                        inputCounter=0;
+                    }
                     let input = this.inputValues[this.inputCounter++]
                     let finalMultiplier = input.payoutMultiplier;
                     let finalPos = 0;
@@ -287,6 +290,9 @@ export default {
          */
         DecodeInputData() {
             this.disableAllInputsManual();
+            if(inputCounter>=this.inputValues){
+                inputCounter=0;
+            }
             let input = this.inputValues[this.inputCounter++]
             let finalMultiplier = input.payoutMultiplier;
             if(this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)){
