@@ -131,7 +131,7 @@
 
 
         <div class="plinkoGameContainer" v-bind:style="{ 'max-width': '100%' }">
-            <div id="plinko" ref="plinkoDiv" v-bind:style="{ 'width': '800px', 'height': '600px', 'max-width': '100%' }">
+            <div id="plinko" ref="plinkoDiv" v-bind:style="{ 'width': '800px', 'max-width': '100%' }">
             </div>
         </div>
     </div>
@@ -623,13 +623,21 @@ export default {
          * the resize code for the game still undex work
          */
         resize() {
-            if (window.outerWidth < 1000) {
+            if (window.outerWidth < 700) {
                 let width =this.$refs.plinkoDiv.offsetWidth; 
                 let height = this.$refs.plinkoDiv.offsetHeight; 
                 this.mainContainer.scale.set(0.65);
                 this.historyContainer.scale.set(0.65);
                 this.historyContainer && this.historyContainer.position.set(width - 80, (height - this.mainContainer.height) / 2);
-                this.mainContainer.position.set((width - this.mainContainer.width) / 2, (height - this.mainContainer.height) / 2)
+                this.mainContainer.position.set((width - 5 - this.mainContainer.width) / 2 , (height - this.mainContainer.height) / 2)
+            }
+            else if (window.outerWidth < 1000) {
+                let width =this.$refs.plinkoDiv.offsetWidth; 
+                let height = this.$refs.plinkoDiv.offsetHeight; 
+                this.mainContainer.scale.set(1);
+                this.historyContainer.scale.set(0.65);
+                this.historyContainer && this.historyContainer.position.set(width - 80, (height - this.mainContainer.height) / 2);
+                this.mainContainer.position.set((width - 5 - this.mainContainer.width) / 2 , (height - this.mainContainer.height) / 2)
             }
             else {
                 this.mainContainer.scale.set(1);
