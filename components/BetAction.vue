@@ -234,24 +234,29 @@ export default {
                 this.$refs["clickButton"].innerHTML = "Stop Autoplay";
                 this.autoplayStarted = true;
                 this.disableAllInputs();
-                let currentConfiguration = this.configurationData[this.currentGameIndex];
-                let numberOfBalls = this.numberOfBallsAutoPlay;
-                let finalPosArr = [];
-                for (let i = 0; i < numberOfBalls; i++) {
-                    finalPosArr.push(Math.floor(Math.random() * (this.currentGameIndex + 9)));
-                }
-                let ctr = 0;
-                let xPosArr = [];
                 let index = 0;
-                for (let i = 0; i < numberOfBalls; i++) {
-                    let reqConfig = currentConfiguration[finalPosArr[i]];
-                    let inputIndex = Math.floor(Math.random() * reqConfig.length);
-                    xPosArr.push(reqConfig[inputIndex]);
-                    ctr++;
+                if(this.inputCounter>=this.inputValues){
+                this.inputCounter=0;
                 }
+                let input = this.inputValues[this.inputCounter++]
+                let finalMultiplier = input.payoutMultiplier;
+                let finalPos = 0;
+                if(this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)){
+                    this.multiplierValues[this.currentGameIndex].indexOf(finalMultiplier);
+                }
+                else{
+                    finalPos = 7;
+                }
+                let currentConfiguration = this.configurationData[this.currentGameIndex];
+                let reqConfig = currentConfiguration[finalPos];
+                let inputIndex = Math.floor(Math.random() * reqConfig.length);
+                this.createdropBall(this.lastIndex, reqConfig[inputIndex], finalPos);
+                index++;
+                this.numberOfBallsAutoPlay--;
+                this.lastIndex++;
                 this.ballDropInterval = setInterval(() => {
-                    if(inputCounter>=this.inputValues){
-                        inputCounter=0;
+                    if(this.inputCounter>=this.inputValues){
+                        this.inputCounter=0;
                     }
                     let input = this.inputValues[this.inputCounter++]
                     let finalMultiplier = input.payoutMultiplier;
@@ -290,8 +295,8 @@ export default {
          */
         DecodeInputData() {
             this.disableAllInputsManual();
-            if(inputCounter>=this.inputValues){
-                inputCounter=0;
+            if(this.inputCounter>=this.inputValues){
+                this.inputCounter=0;
             }
             let input = this.inputValues[this.inputCounter++]
             let finalMultiplier = input.payoutMultiplier;
