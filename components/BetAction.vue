@@ -2,41 +2,40 @@
     <div className="mainContainer" v-bind:style="{ 'position': 'relative', 'max-width': '100%' }">
         <div class="selectionButtons">
             <div class="manualAuto">
-                <button class="filter-button" v-bind:class="{ selected: isSelectedManual,playing: isPlaying}" @click="ShowManual()" v-bind:style="{ 'z-index': 9999999999 }"
-                    ref="showManual">
+                <button class="filter-button" v-bind:class="{ selected: isSelectedManual, playing: isPlaying }"
+                    @click="ShowManual()" v-bind:style="{ 'z-index': 9999999999 }" ref="showManual">
                     Manual
                 </button>
-                <button class="filter-button"  v-bind:class="{ selected:isSelectedAutoBet,playing: isPlaying}"  @click="ShowAutomatic()" ref="ShowAutomatic"
-                    v-bind:style="{ 'z-index': 9999999999 }">
+                <button class="filter-button" v-bind:class="{ selected: isSelectedAutoBet, playing: isPlaying }"
+                    @click="ShowAutomatic()" ref="ShowAutomatic" v-bind:style="{ 'z-index': 9999999999 }">
                     Automatic
                 </button>
             </div>
             <div className="manualSection" v-bind:style="{ 'display': displayManual }">
                 <div class="inputFormat">
                     <span class="InputTextLabel">Bet amount:</span>
-                    <div >
-                        <div >
+                    <div>
+                        <div>
                             <CurrencyDollarSimple weight="bold" />
                         </div>
                     </div>
-                    <div >
-                        <input class="InputTextVal" type="number" v-model="count" ref="countManual" 
-                            style="" />
-                        <button @click="halfDivide()" class="sideButton" ref="halfDivide" >
+                    <div>
+                        <input class="InputTextVal" type="number" v-model="count" ref="countManual" style="" />
+                        <button @click="halfDivide()" class="sideButton" ref="halfDivide">
                             ½
                         </button>
-                        <button @click="double()" class="sideButton" ref="double" >
+                        <button @click="double()" class="sideButton" ref="double">
                             2x
                         </button>
-                        <button ref="max" class="sideButton" >
+                        <button ref="max" class="sideButton">
                             max
                         </button>
                     </div>
                 </div>
                 <div class="inputFormat">
                     <span class="InputTextLabel">Lines:</span>
-                    <select class="InputTextVal" defaultValue="{16}" ref="lineSelect" style="Color: #fff;"
-                        id="lines" @change="ChangeLine">
+                    <select class="InputTextVal" defaultValue="{16}" ref="lineSelect" style="Color: #fff;" id="lines"
+                        @change="ChangeLine">
                         <!-- {linesOptions.map(line => ( -->
                         <option key="{line}" value=16>16 Line</option>
                         <option key="{line}" value=15>15 Line</option>
@@ -52,8 +51,7 @@
                 </div>
                 <div class="inputFormat">
                     <span class="InputTextLabel">Risk:</span>
-                    <select class="InputTextVal" defaultValue="{high}" ref="riskSelect"  style="color: #fff;"
-                        id="lines">
+                    <select class="InputTextVal" defaultValue="{high}" ref="riskSelect" style="color: #fff;" id="lines">
                         <!-- {linesOptions.map(line => ( -->
                         <option value=high>High Risk</option>
                         <option value=medium>Medium Risk</option>
@@ -70,14 +68,13 @@
             <div className="autoBetSection" v-bind:style="{ 'display': displayAutomatic }">
                 <div class="inputFormat">
                     <span class="InputTextLabel">Bet amount:</span>
-                    <div >
-                        <div >
+                    <div>
+                        <div>
                             <CurrencyDollarSimple weight="bold" />
                         </div>
                     </div>
-                    <div >
-                        <input class="InputTextVal" type="number" v-model="count" ref="countAutoplay"
-                            style="" />
+                    <div>
+                        <input class="InputTextVal" type="number" v-model="count" ref="countAutoplay" style="" />
                         <button @click="halfDivide()" ref="halfDivideAutoplay" class="sideButton">
                             ½
                         </button>
@@ -107,7 +104,7 @@
                 </div>
                 <div class="inputFormat">
                     <span class="InputTextLabel">Risk:</span>
-                    <select class="InputTextVal" defaultValue="{high}" ref="riskSelectAutoplay"  style="color: #fff;"
+                    <select class="InputTextVal" defaultValue="{high}" ref="riskSelectAutoplay" style="color: #fff;"
                         id="lines">
                         <!-- {linesOptions.map(line => ( -->
                         <option value=high>High Risk</option>
@@ -123,8 +120,8 @@
                         v-model="numberOfBallsAutoPlay" style="color:#fff;" />
                 </div>
                 <div style="margin-top: 30px;">
-                    <a @click="DecodeInputDataAutoplay()" class="betbutton" v-bind:class="{playing: isPlayingAutoplay}" ref="clickButton" href="#" rel="noopener noreferrer"
-                        tag="a"><!--[-->Start AutoBet<!--]--></a>
+                    <a @click="DecodeInputDataAutoplay()" class="betbutton" v-bind:class="{ playing: isPlayingAutoplay }"
+                        ref="clickButton" href="#" rel="noopener noreferrer" tag="a"><!--[-->Start AutoBet<!--]--></a>
                 </div>
             </div>
         </div>
@@ -137,13 +134,15 @@
     </div>
 </template>
 
-<script lang="ts">
+<script>
 import * as PIXI from "pixi.js";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin.js";
 import positionPathArr from "@/assets/json/pathArr.json";
 import inputValues from "@/assets/json/input.json";
+import { Emitter } from 'pixi-particles';
+import particleImg from '@/assets/images/particle.png'
 
 const SCENE_SCALE = 1.5;
 
@@ -229,22 +228,22 @@ export default {
                 this.StopAutoPlay();
             }
             else if (this.numberOfBallsAutoPlay > 0) {
-                this.isPlaying=true;
-                this.isPlayingAutoplay=false;
+                this.isPlaying = true;
+                this.isPlayingAutoplay = false;
                 this.$refs["clickButton"].innerHTML = "Stop Autoplay";
                 this.autoplayStarted = true;
                 this.disableAllInputs();
                 let index = 0;
-                if(this.inputCounter>=this.inputValues){
-                this.inputCounter=0;
+                if (this.inputCounter >= this.inputValues) {
+                    this.inputCounter = 0;
                 }
                 let input = this.inputValues[this.inputCounter++]
                 let finalMultiplier = input.payoutMultiplier;
                 let finalPos = 0;
-                if(this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)){
+                if (this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)) {
                     this.multiplierValues[this.currentGameIndex].indexOf(finalMultiplier);
                 }
-                else{
+                else {
                     finalPos = 7;
                 }
                 let currentConfiguration = this.configurationData[this.currentGameIndex];
@@ -255,16 +254,16 @@ export default {
                 this.numberOfBallsAutoPlay--;
                 this.lastIndex++;
                 this.ballDropInterval = setInterval(() => {
-                    if(this.inputCounter>=this.inputValues){
-                        this.inputCounter=0;
+                    if (this.inputCounter >= this.inputValues) {
+                        this.inputCounter = 0;
                     }
                     let input = this.inputValues[this.inputCounter++]
                     let finalMultiplier = input.payoutMultiplier;
                     let finalPos = 0;
-                    if(this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)){
+                    if (this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)) {
                         this.multiplierValues[this.currentGameIndex].indexOf(finalMultiplier);
                     }
-                    else{
+                    else {
                         finalPos = 7;
                     }
                     let currentConfiguration = this.configurationData[this.currentGameIndex];
@@ -285,7 +284,7 @@ export default {
 
         StopAutoPlay() {
             this.$refs["clickButton"].innerHTML = "Start AutoBet";
-            this.isPlayingAutoplay=true;
+            this.isPlayingAutoplay = true;
             clearInterval(this.ballDropInterval);
         },
 
@@ -295,12 +294,12 @@ export default {
          */
         DecodeInputData() {
             this.disableAllInputsManual();
-            if(this.inputCounter>=this.inputValues){
-                this.inputCounter=0;
+            if (this.inputCounter >= this.inputValues) {
+                this.inputCounter = 0;
             }
             let input = this.inputValues[this.inputCounter++]
             let finalMultiplier = input.payoutMultiplier;
-            if(this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)){
+            if (this.multiplierValues[this.currentGameIndex].includes(finalMultiplier)) {
                 let finalPos = this.multiplierValues[this.currentGameIndex].indexOf(finalMultiplier);
                 let currentConfiguration = this.configurationData[this.currentGameIndex];
                 let reqConfig = currentConfiguration[finalPos];
@@ -314,20 +313,69 @@ export default {
          */
         updatePos() {
             this.dropBallsArr.forEach((ball, index) => {
-                if(ball.visible && ball.positionIndex<ball.positionArray.length){
+                if (ball.visible && ball.positionIndex < ball.positionArray.length) {
                     ball.position.x = ball.positionArray[ball.positionIndex].x;
                     ball.position.y = ball.positionArray[ball.positionIndex++].y;
                 }
-                if(ball.positionIndex>=ball.positionArray.length && ball.visible){
+                for (let i = 0; i < this.ballPositions.length - 2; i++) {
+                    for (let j = 0; j < this.ballPositions[i].length; j++) {
+                        let posball = {x:ball.position.x+this.ballSize,y:ball.position.y+this.ballSize};
+                        let posEnv = {x:this.ballPositions[i][j].x+this.ballSizeEnv,y:this.ballPositions[i][j].y+this.ballSizeEnv};
+                        if (
+                            posball.x <= (posEnv.x + this.ballSizeEnv*2) && 
+                            (posball.x + this.ballSize*2) >= posEnv.x &&
+                            posball.y <= (posEnv.y + this.ballSizeEnv*2) &&
+                            (posball.y + this.ballSize*2) >= posEnv.y){
+                                if(!this.cbbodies[i][j].ripple){
+                                    this.createRipple(this.cbbodies[i][j],this.ballPositions[i][j].x,this.ballPositions[i][j].y);
+                                }
+                            }
+                        }
+                }
+                if (ball.positionIndex >= ball.positionArray.length && ball.visible) {
                     this.ballsDropped++;
                     ball.visible = false;
                     let finalIndex = Math.floor((ball.position.x - this.ballPositions[this.numberOfrow - 1][0].x) / this.ballDistance);
                     this.animateBottomMultiplier(ball, ball.finalPoint);
                 }
                 // if (ball.position.y > this.bottomMultiplier[0].y - 20 && ball.visible) {
-                    
+
                 // }
             });
+        },
+        createRipple(ballEnv,x,y){
+            ballEnv.ripple = true;
+            let ripple = [];
+            for(let i=0;i<30;i++){
+                ripple.push(new PIXI.Graphics());
+                ripple[i].resolution = 3;
+                ripple[i].beginFill(0xffffff, 1).drawCircle(0, 0, this.ballSizeEnv+i/4).endFill();
+                ripple[i].position.set(x, y);
+                ripple[i].visible = false;
+                ripple[i].alpha = 0.1;
+                this.mainContainer.addChild(ripple[i]);
+            }
+            let i=0;
+            let interval = setInterval(()=>{
+                ripple[i].visible = true;
+                i++;
+                if(i>3){
+                    ripple[i-3].visible = false;
+                }
+                if(i>=30){
+                    ballEnv.ripple = false;;
+                    clearInterval(interval);
+                    this.destroyRipple(ripple);
+                }
+            },300/30)
+        },
+        destroyRipple(ripple){
+            for(let i=0;i<ripple.length;i++){
+                // ripple[i].visible = false;
+                // this.mainContainer.removeChildren(ripple[i]);
+                ripple[i].destroy();
+            }
+            ripple=[];
         },
         /**
          * after the balls drops on the multiplier we animate a bounce animation for the multiplier
@@ -382,10 +430,10 @@ export default {
                 tween4.eventCallback("onComplete", () => {
                     if (this.ballsDropped === _this.lastIndex && this.destroyed === false) {
                         //   _this.destroyAllAndCreateNew();
-                        if(_this.isSelectedManual){
+                        if (_this.isSelectedManual) {
                             _this.enableAllInputsManual();
                         }
-                        else{
+                        else {
                             _this.enableAllInputs();
                         }
                     }
@@ -400,7 +448,7 @@ export default {
             this.multiplierText = [];
             for (let i = 0; i <= this.numberOfrow; i++) {
                 this.bottomMultiplier[i] = new PIXI.Graphics();
-                this.bottomMultiplier[i].resolution=3;
+                this.bottomMultiplier[i].resolution = 3;
                 this.bottomMultiplier[i].beginFill(0x313644, 1).drawRoundedRect(0, 0, this.ballDistance - 3, 30, 10);
                 this.bottomMultiplier[i].position.set(this.ballPositions[this.numberOfrow][i].x + this.ballDistance / 2 + this.ballSizeEnv + 2, this.ballPositions[this.numberOfrow][i].y - this.ballDistance / 2);
                 this.bottomMultiplier[i].pivot.set(this.ballSizeEnv, this.ballSizeEnv);
@@ -415,8 +463,8 @@ export default {
                 console.log(this.multiplierText[i].width);
 
                 this.multiplierText[i].text = this.multiplierValues[this.currentGameIndex][i];
-                if(this.multiplierValues[this.currentGameIndex][i].toString().length<=2){
-                    this.multiplierText[i].text+="x";
+                if (this.multiplierValues[this.currentGameIndex][i].toString().length <= 2) {
+                    this.multiplierText[i].text += "x";
                 }
                 this.multiplierText[i].anchor.set(0.5);
 
@@ -445,7 +493,7 @@ export default {
                     this.ballPositions[i][j] = { x: x, y: y };
 
                     this.cbbodies[i].push(new PIXI.Graphics());
-                    this.cbbodies[i].resolution=3;
+                    this.cbbodies[i].resolution = 3;
                     this.cbbodies[i][j].beginFill(0xffffff, 1).drawCircle(0, 0, this.ballSizeEnv).endFill();
                     this.cbbodies[i][j].position.set(x, y);
                     this.mainContainer.addChild(this.cbbodies[i][j]);
@@ -487,10 +535,12 @@ export default {
          * balls and pins to prevent memoryload here
          */
         destroyAllAndCreateNew() {
-            this.destroyed = true;
-            this.mainContainer.removeChildren();
-            let _this = this;
-            _this.setEnvironmentAccordingToSimulation(this.currentGameIndex);
+            // setTimeout(()=>{
+                this.destroyed = true;
+                this.mainContainer.removeChildren();
+                let _this = this;
+                _this.setEnvironmentAccordingToSimulation(this.currentGameIndex);
+            // },500);
         },
 
         /**
@@ -502,11 +552,18 @@ export default {
             mask.beginFill(0xfff, 1).drawRoundedRect(0, 0, 50, 200, 20);
             mask.alpha = 0.5;
             mask.position.set(50, 50);
+            // this.markArr = [];
+            // for(let i=0;i<3;i++){
+            //     this.markArr[i] = new PIXI.Graphics();
+            //     this.markArr[i].beginFill(0xfff, 1).drawRoundedRect(0, 0, 50, 50*i+50, 20);
+            //     this.markArr[i].alpha = 0.5;
+            //     markArr[i].position.set(50, 50);
+            // }
 
 
             for (let i = 0; i < 6; i++) {
                 let rect = new PIXI.Graphics();
-                rect.resolution=3;
+                rect.resolution = 3;
                 rect.beginFill(0x313644, 1).drawRect(0, 0, 50, 50);
                 rect.position.set(50, i * 50);
 
@@ -530,6 +587,9 @@ export default {
                 rectborder.name = "rectborder" + i;
 
                 this.historyComponent[i] = { rect: rect, text: text, rectborder: rectborder };
+                rect.visible = false;
+                text.visible = false;
+                rectborder.visible = false;
                 this.historyContainer.addChild(rect);
                 this.historyContainer.addChild(text);
                 this.historyContainer.addChild(rectborder);
@@ -557,9 +617,12 @@ export default {
             this.isHistoryMoving = true;
             this.historyComponent[0] = this.historyComponent[5];
             this.historyComponent[0].rect.position.set(50, i * 50);
+            this.historyComponent[0].rect.visible = true;
             this.historyComponent[0].text.position.set(50 + 25, i * 50 + 25);
+            this.historyComponent[0].text.visible = true;
             this.historyComponent[0].text.text = value;
             this.historyComponent[0].rectborder.position.set(50 + 2.5, i * 50);
+            this.historyComponent[0].rectborder.visible = true;
 
             for (let i = 5; i > 0; i--) {
                 this.historyComponent[i] = this.historyComponent[i - 1];
@@ -572,21 +635,21 @@ export default {
                 this.moveHistoryDown(this.historyComponent[i].rectborder, 2, i);
             }
         },
-        enableAllInputsManual(){
-            this.isPlaying=false;
+        enableAllInputsManual() {
+            this.isPlaying = false;
             for (let i = 0; i < this.refArrManual.length; i++) {
                 this.$refs[this.refArrManual[i]].disabled = false;
             }
         },
-        disableAllInputsManual(){
-            this.isPlaying=true;
+        disableAllInputsManual() {
+            this.isPlaying = true;
             for (let i = 0; i < this.refArrManual.length; i++) {
                 this.$refs[this.refArrManual[i]].disabled = true;
             }
         },
         enableAllInputs() {
-            this.isPlayingAutoplay=false;
-            this.isPlaying=false;
+            this.isPlayingAutoplay = false;
+            this.isPlaying = false;
             this.autoplayStarted = false;
             this.$refs["clickButton"].innerHTML = "Start AutoBet";
             for (let i = 0; i < this.refArr.length; i++) {
@@ -594,7 +657,7 @@ export default {
             }
         },
         disableAllInputs() {
-            this.isPlaying=true;
+            this.isPlaying = true;
             for (let i = 0; i < this.refArr.length; i++) {
                 this.$refs[this.refArr[i]].disabled = true;
             }
@@ -629,20 +692,20 @@ export default {
          */
         resize() {
             if (window.outerWidth < 700) {
-                let width =this.$refs.plinkoDiv.offsetWidth; 
-                let height = this.$refs.plinkoDiv.offsetHeight; 
+                let width = this.$refs.plinkoDiv.offsetWidth;
+                let height = this.$refs.plinkoDiv.offsetHeight;
                 this.mainContainer.scale.set(0.65);
                 this.historyContainer.scale.set(0.65);
                 this.historyContainer && this.historyContainer.position.set(width - 80, (height - this.mainContainer.height) / 2);
-                this.mainContainer.position.set((width - 5 - this.mainContainer.width) / 2 , (height - this.mainContainer.height) / 2)
+                this.mainContainer.position.set((width - 5 - this.mainContainer.width) / 2, (height - this.mainContainer.height) / 2)
             }
             else if (window.outerWidth < 1000) {
-                let width =this.$refs.plinkoDiv.offsetWidth; 
-                let height = this.$refs.plinkoDiv.offsetHeight; 
+                let width = this.$refs.plinkoDiv.offsetWidth;
+                let height = this.$refs.plinkoDiv.offsetHeight;
                 this.mainContainer.scale.set(1);
                 this.historyContainer.scale.set(0.65);
                 this.historyContainer && this.historyContainer.position.set(width - 80, (height - this.mainContainer.height) / 2);
-                this.mainContainer.position.set((width - 5 - this.mainContainer.width) / 2 , (height - this.mainContainer.height) / 2)
+                this.mainContainer.position.set((width - 5 - this.mainContainer.width) / 2, (height - this.mainContainer.height) / 2)
             }
             else {
                 this.mainContainer.scale.set(1);
@@ -654,15 +717,84 @@ export default {
 
     mounted() {
         this.gameApp = new PIXI.Application({
-            resizeTo: this.$refs.plinkoDiv, backgroundColor: 0x212530, antialias: true,resolution:1
+            resizeTo: this.$refs.plinkoDiv, backgroundColor: 0x212530, antialias: true, resolution: 1
         });
 
-        
+        this.configEmitter = {
+            "alpha": {
+                "start": 1,
+                "end": 0
+            },
+            "scale": {
+                "start": 1,
+                "end": 1,
+                "minimumScaleMultiplier": 1
+            },
+            "color": {
+                "start": "#ffffff",
+                "end": "#ffffff"
+            },
+            "speed": {
+                "start": 1,
+                "end": 1,
+                "minimumSpeedMultiplier": 1
+            },
+            "acceleration": {
+                "x": 0,
+                "y": 0
+            },
+            "maxSpeed": 0,
+            "startRotation": {
+                "min": 0,
+                "max": 360
+            },
+            "noRotation": false,
+            "rotationSpeed": {
+                "min": 0,
+                "max": 200
+            },
+            "lifetime": {
+                "min": 0.5,
+                "max": 0.5
+            },
+            "blendMode": "normal",
+            "ease": [
+                {
+                    "s": 0,
+                    "cp": 0.329,
+                    "e": 0.548
+                },
+                {
+                    "s": 0.548,
+                    "cp": 0.767,
+                    "e": 0.876
+                },
+                {
+                    "s": 0.876,
+                    "cp": 0.985,
+                    "e": 1
+                }
+            ],
+            "frequency": 0.1,
+            "emitterLifetime": 1,
+            "maxParticles": 1,
+            "pos": {
+                "x": 0,
+                "y": 0
+            },
+            "addAtBack": true,
+            "spawnType": "circle",
+            "spawnCircle": {
+                "x": 0,
+                "y": 0,
+                "r": 2
+            }
+        }
         this.configurationData = positionPathArr;
         this.refArr = ["showManual", "ShowAutomatic", "countManual", "halfDivide", "double", "max", "countAutoplay", "halfDivideAutoplay", "doubleAutoplay", "doubleMax", "numberOfBets", "lineSelect", "riskSelect", "lineSelectAutoplay", "riskSelectAutoplay"];
-        this.refArrManual = ["showManual","ShowAutomatic","countManual","halfDivide","double","max","lineSelect","riskSelect"];
+        this.refArrManual = ["showManual", "ShowAutomatic", "countManual", "halfDivide", "double", "max", "lineSelect", "riskSelect"];
         this.ballPositions = [];
-        this.multiplierValues = [[13,3,1.3,0.7,0.4,0.7,1.3,3,13],[18,4,1.7,0.9,0.5,0.5,0.8,1.7,4,18],[22,5,2,1.4,0.6,0.4,0.6,1.4,2,5,22],[24,6,3,1.8,0.7,0.5,0.5,0.7,1.8,3,6,24],[33,11,4,2,1.1,0.6,0.3,0.6,1.1,2,4,11,33],[43,13,6,3,1.3,0.7,0.4,0.4,0.7,1.3,3,6,13,43],[58,15,7,4,1.9,1,0.5,0.2,0.5,1,1.9,4,7,15,58],[88,18,11,5,3,1.3,0.5,0.3,0.3,0.5,1.3,3,5,11,18,88],[110,41,10,5,3,1.5,1,0.5,0.3,0.5,1,1.5,3,5,10,41,110]];
+        this.multiplierValues = [[13, 3, 1.3, 0.7, 0.4, 0.7, 1.3, 3, 13], [18, 4, 1.7, 0.9, 0.5, 0.5, 0.8, 1.7, 4, 18], [22, 5, 2, 1.4, 0.6, 0.4, 0.6, 1.4, 2, 5, 22], [24, 6, 3, 1.8, 0.7, 0.5, 0.5, 0.7, 1.8, 3, 6, 24], [33, 11, 4, 2, 1.1, 0.6, 0.3, 0.6, 1.1, 2, 4, 11, 33], [43, 13, 6, 3, 1.3, 0.7, 0.4, 0.4, 0.7, 1.3, 3, 6, 13, 43], [58, 15, 7, 4, 1.9, 1, 0.5, 0.2, 0.5, 1, 1.9, 4, 7, 15, 58], [88, 18, 11, 5, 3, 1.3, 0.5, 0.3, 0.3, 0.5, 1.3, 3, 5, 11, 18, 88], [110, 41, 10, 5, 3, 1.5, 1, 0.5, 0.3, 0.5, 1, 1.5, 3, 5, 10, 41, 110]];
         this.inputValues = inputValues;
         this.inputCounter = 0;
         this.gameApp.stage.interactive = true;
